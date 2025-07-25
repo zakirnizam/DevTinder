@@ -3,17 +3,19 @@ const app = express();
 
 
 
-app.use("/test", (req, res) => {
-  res.send("test path");
+app.get('/user',(req,res)=>{
+res.send({"Name":"Nizam","Gender":"male"})
 });
 
-app.use("/hello", (req, res) => {
-  res.send("hello path");
+app.post('/user',(req,res)=>{
+
+res.send("Added new users to DB")
 });
 
-app.use("/", (req, res) => {
-  res.send("default path");
-});
+app.delete('/user',(req,res)=>{
+
+res.send("Deleted a user from DB")
+})
 
 
 app.listen(3000, () => {

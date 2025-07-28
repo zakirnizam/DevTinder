@@ -376,3 +376,92 @@ Search Type: books, Query: javascript
 |------------------|------------------|----------------------------------|
 | Query Params     | `req.query`     | `/search?q=term`               |
 | Route Params     | `req.params`    | `/user/:id` → `/user/123`      |
+
+## EPISODE 5 | MiddleWares and Error Handling
+
+## 1️⃣ What is Middleware in Express.js?
+
+Middleware functions in **Express.js** are functions that sit **between the request (req)** from the client and the **response (res)** sent by the server.  
+They can **modify** the request/response, **run code**, **end the request-response cycle**, or **pass control to the next middleware** using `next()`.
+
+### ✅ Key Points about Middleware:
+- Executed **sequentially** in the order they are defined.
+- Each middleware has access to `req`, `res`, and the `next()` function.
+- Middleware can:
+  - Run code (e.g., logging)
+  - Modify `req` or `res`
+  - End the request-response cycle (`res.send()`)
+  - Pass control to the next middleware (`next()`)
+
+### 🔹 Example:
+\`\`\`javascript
+const express = require('express');
+const app = express();
+
+app.use((req, res, next) => {
+  console.log('Middleware 1 executed');
+  next(); // Pass control to next middleware
+});
+
+app.use((req, res) => {
+  res.send('Response sent after middleware');
+});
+\`\`\`
+
+---
+
+## 2️⃣ How Express.js Handles Requests Behind the Scenes?
+
+When a request comes in:
+1. Express creates **`req`** (request) and **`res`** (response) objects.
+2. The request goes through a **middleware stack** (functions defined via `app.use()`, `app.get()`, etc.).
+3. Each middleware checks the request (URL/path or method) and decides:
+   - If it should **handle it** (send a response), or
+   - Call `next()` to pass it down the stack.
+4. If no middleware sends a response, Express returns **404 Not Found**.
+
+👉 Internally, Express uses Node.js’s **HTTP module** and builds on top of it for easier request/response handling.
+
+---
+
+## 3️⃣ Difference Between `app.use()` and `app.all()`
+
+### ✅ `app.use()`
+- Used to **mount middleware functions**.
+- Works for **all HTTP methods** (GET, POST, PUT, DELETE, etc.).
+- Can be **path-specific** or **global**.
+- Typically used for **middleware** (e.g., authentication, logging, body-parsing).
+
+#### 🔹 Example:
+\`\`\`javascript
+app.use('/users', (req, res, next) => {
+  console.log('Middleware for /users route');
+  next();
+});
+\`\`\`
+
+---
+
+### ✅ `app.all()`
+- Handles **all HTTP methods** (**GET, POST, PUT, DELETE**) for a **specific route**.
+- Useful when you want **one handler** for every method on a given route.
+- Requires an **exact path match** and is mostly used for route handling.
+
+#### 🔹 Example:
+\`\`\`javascript
+app.all('/test', (req, res) => {
+  res.send(\`Handled \${req.method} request on /test\`);
+});
+\`\`\`
+
+---
+
+### 🔑 Quick Summary:
+
+| Feature         | `app.use()`                              | `app.all()`                             |
+|------------------|-----------------------------------------|-----------------------------------------|
+| Purpose         | Mount middleware (global or path-based)  | Handle all HTTP methods for a route     |
+| Path Matching   | Partial match allowed (`/users`)         | Exact path match required               |
+| Use Case        | Logging, Auth, Parsing, Error handling   | Single handler for all HTTP methods     |
+
+---

@@ -1,22 +1,34 @@
 const express = require("express");
+const connectDB = require("./config/database");
+const User = require("./models/user");
 const app = express();
 
-app.get("/getUserData", (req, res) => {
-  // Use try catch everywher, its a good coding practice
+// Creating a POST /signUp API
+
+app.post("/signup", async (req, res) => {
+  const user = new User({
+    firstName: "Zakir",
+    lastName: "Nizam",
+    emailId: "Nizam@test.com",
+    password: "Nizam@12334",
+    k,
+  });
   try {
-    throw new Error("Some error here");
-  } catch (error) {
-    res.status(500).send("Something went wrong | CATCH BLOCK");
+    await user.save();
+    res.send("***Data Saved***");
+  } catch (e) {
+    res.send("***Unable to save data***");
   }
 });
 
-// Use This As a Wildcard , It will be triggered when there are unhandled Errors
-app.use("/", (err, req, res, next) => {
-  if (err) {
-    res.send("Something Went Wrong , Please Try Again Sometime");
-  }
-});
-
-app.listen(3000, () => {
-  console.log("Server is running on port 3000");
-});
+// connecting a database
+connectDB()
+  .then(() => {
+    console.log("Database connection established");
+    app.listen(3000, () => {
+      console.log("Server is running on port 3000");
+    });
+  })
+  .catch(() => {
+    console.log("Unable to connect to Database");
+  });

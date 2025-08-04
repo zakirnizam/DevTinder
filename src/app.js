@@ -3,24 +3,19 @@ const connectDB = require("./config/database");
 const User = require("./models/user");
 const app = express();
 
-// Creating a POST /signUp API
+//MiddleWare
+app.use(express.json())
 
+// Creating a POST /signUp API
 app.post("/signup", async (req, res) => {
-  const user = new User({
-    firstName: "Zakir",
-    lastName: "Nizam",
-    emailId: "Nizam@test.com",
-    password: "Nizam@12334",
-    k,
-  });
+  const user = new User(req.body);
   try {
     await user.save();
     res.send("***Data Saved***");
   } catch (e) {
     res.send("***Unable to save data***");
-  }
-});
-
+  }}
+);
 // connecting a database
 connectDB()
   .then(() => {

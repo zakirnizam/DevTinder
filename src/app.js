@@ -39,7 +39,7 @@ app.get("/feed", async (req, res) => {
     console.log(users);
     res.send(users);
   } catch (error) {
-    res.send("Something went Wrong");
+    res.status(400).send("Something went Wrong");
   }
 });
 
@@ -51,10 +51,26 @@ const userId = req.body.userId
     await User.findOneAndDelete(userId)
     res.send("Deleted the user successfully")
   } catch (error) {
-    res.send("Something went wrong")
+    res.status(400).send("Something went wrong")
   }
 })
 
+
+//Find one and Update the data
+
+app.patch('/user', async (req,res)=>{
+  const userId = req.body.userId;
+  const data = req.body;
+  try {
+    const user = await User.findByIdAndUpdate(userId,data,{returnDocument:"after"});
+
+    res.send('***User data updated***')
+    console.log("Updated data ",user);
+    
+  } catch (error) {
+    res.send(400).send("Something went wrong")
+  }
+})
 // connecting a database
 connectDB()
   .then(() => {

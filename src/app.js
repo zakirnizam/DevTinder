@@ -13,7 +13,7 @@ app.post("/signup", async (req, res) => {
     await user.save();
     res.send("***Data Saved***");
   } catch (e) {
-    res.send("***Unable to save data***");
+    res.send("***Unable to save data***" + e.message);
   }
 });
 
@@ -63,6 +63,7 @@ app.patch("/user", async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(userId, data, {
       returnDocument: "after",
+      runValidators: true,
     });
     res.send("***User data updated***");
     console.log("Updated data ", user);

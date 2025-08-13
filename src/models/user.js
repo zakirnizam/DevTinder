@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const validator = require("validator");
 
 const userSchema = new mongoose.Schema(
   {
@@ -10,8 +11,21 @@ const userSchema = new mongoose.Schema(
       required: true,
       lowercase: true,
       trim: true,
+      validate(value) {
+        if (!validator.isEmail(value)) {
+          throw new Error("Invalid Email Id");
+        }
+      },
     },
-    password: { type: String, required: true },
+    password: {
+      type: String,
+      required: true,
+      validate(value) {
+        if (!validator.isStrongPassword(value)) {
+          throw new Error("Please enter a strong password");
+        }
+      },
+    },
     gender: {
       type: String,
       validate(value) {
@@ -25,6 +39,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       default:
         "https://png.pngtree.com/png-vector/20250718/ourmid/pngtree-cartoon-hand-drawn-handsome-boy-avatar-png-image_16798195.webp",
+      validate(value) {
+        if (!validator.isURL(value)) {
+          throw new Error("Please provide a valid URL");
+        }
+      },
     },
     skills: { type: [String] },
     about: { type: String, default: "Hello, I am using DevTinder" },

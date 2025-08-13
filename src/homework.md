@@ -464,4 +464,44 @@ app.all('/test', (req, res) => {
 | Path Matching   | Partial match allowed (`/users`)         | Exact path match required               |
 | Use Case        | Logging, Auth, Parsing, Error handling   | Single handler for all HTTP methods     |
 
+
+## EPISODE 6
+
+# MongoDB Integration & Signup API
+
+- **MongoDB Added:**  
+  - Installed and configured Mongoose for MongoDB integration.
+  - Created a new `database.js` config file for database connection logic.
+
+- **User Schema:**  
+  - Created a `user.js` model with fields: `firstName`, `lastName`, `emailId`, `password`, `gender`, `age`.
+
+- **Signup API:**  
+  - Added a `/signup` POST endpoint to create a new user with hardcoded data.
+  - Connected the Express app to MongoDB using the new config.
+
+
+  ## EP 07: User Model & API Improvements
+- **Enhanced User Model:**
+  - Added validation and `required: true` for important fields (like `firstName`, `emailId`, `password`).
+  - Set `unique: true` for `emailId` to prevent duplicate registrations.
+  - Added default values for `photoUrl` and `about`.
+- **Improved Error Handling:**
+  - Signup API now returns error messages if user creation fails (e.g., duplicate email).
+- **User Management APIs:**
+  - Added endpoints to:
+    - Get user by email
+    - Get all users (feed)
+    - Delete user by ID
+    - Update user profile (with allowed fields and skill limit)
+
+## EP 08: API-Level Data Sanitization
+- **Sanitization:**
+  - Added checks in update API to only allow certain fields to be updated.
+  - Limited the number of skills a user can add (max 5).
+- **General:**
+  - Used `express.json()` middleware for JSON body parsing.
+  - Used async/await and try/catch for robust error handling.
+
 ---
+**Tip:** If you get duplicate email errors, clean up your MongoDB collection and ensure the unique index is set on `emailId`.

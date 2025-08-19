@@ -2,6 +2,7 @@ const express = require("express");
 const connectDB = require("./config/database");
 const User = require("./models/user");
 const app = express();
+const {validateSignUpData} = require('./utils/validator')
 
 //MiddleWare
 app.use(express.json());
@@ -10,6 +11,7 @@ app.use(express.json());
 app.post("/signup", async (req, res) => {
   const user = new User(req.body);
   try {
+    validateSignUpData(req)
     await user.save();
     res.send("***Data Saved***");
   } catch (e) {

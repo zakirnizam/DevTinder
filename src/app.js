@@ -3,15 +3,24 @@ const connectDB = require("./config/database");
 const User = require("./models/user");
 const app = express();
 const {validateSignUpData} = require('./utils/validator')
+const bcrypt = require('bcrypt')
 
 //MiddleWare
 app.use(express.json());
 
 // Creating a POST /signUp API
 app.post("/signup", async (req, res) => {
-  const user = new User(req.body);
   try {
     validateSignUpData(req)
+    const { firstName, lastName, emailId, password } = req.body;
+    const passwordHash = await bcrypt.hash(password, 10);
+    const user = new User({
+      firstName,
+      lastName,
+      emailId,
+      password: passwordHash,
+    });
+
     await user.save();
     res.send("***Data Saved***");
   } catch (e) {

@@ -2,16 +2,19 @@ const express = require("express");
 const connectDB = require("./config/database");
 const User = require("./models/user");
 const app = express();
-const {validateSignUpData} = require('./utils/validator')
-const bcrypt = require('bcrypt')
+const { validateSignUpData } = require("./utils/validator");
+const bcrypt = require("bcrypt");
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 
 //MiddleWare
 app.use(express.json());
+app.use(cookieParser());
 
 // Creating a POST /signUp API
 app.post("/signup", async (req, res) => {
   try {
-    validateSignUpData(req)
+    validateSignUpData(req);
     const { firstName, lastName, emailId, password } = req.body;
     const passwordHash = await bcrypt.hash(password, 10);
     const user = new User({
@@ -38,11 +41,34 @@ app.post("/login", async (req, res) => {
     }
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (isPasswordValid) {
+      //Creare a JWT token
+      const token = await jwt.sign({ _id: user._id }, "#Nizam17");
+      res.cookie("token", token);
       res.send("Login Successfull");
     } else {
       throw new Error("Invalid Password");
     }
   } catch (error) {
+    res.status(400).send("ERROR" + error.message);
+  }
+});
+
+app.get("/profile", async(req, res) => {
+  try{
+  const cookies = req.cookies;
+  const token = cookies;
+  if (!token) {
+    throw new Error("No token found");
+  }
+  //Validate the token
+  const decodedMessage = jwt.verify(token.token, "#Nizam17");
+  const _id = decodedMessage;
+  const user = await User.findById(_id);
+  if (!user) {
+    throw new Error("User not found");
+  }
+  res.send(user);}
+  catch (error) {
     res.status(400).send("ERROR" + error.message);
   }
 });

@@ -37,7 +37,6 @@ authRouter.post("/login", async (req, res) => {
     }
     const isPasswordValid = await user.validatePassword(password);
     if (isPasswordValid) {
-        console.log("nizam")
       //Creare a JWT token
       const token = await user.getJWT();
       res.cookie("token", token, {expires: new Date(Date.now() + 86400000)
@@ -50,4 +49,11 @@ authRouter.post("/login", async (req, res) => {
     res.status(400).send("ERROR :" + error.message);
   }
 });
+
+authRouter.post("/logout", async (req, res) => {
+res.cookie('token',null,{
+  expires: new Date(Date.now())
+});
+res.send("Logout Successful");
+})
 module.exports = authRouter;

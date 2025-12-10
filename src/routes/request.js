@@ -22,7 +22,7 @@ requestRouter.post('/request/send/:status/:toUserId',userAuth, async(req,res)=>{
       return res.status(404).json({message:"User Not Found"})
     }
 
-    const existingConnectionRequest = ConnectionRequest.findOne({
+    const existingConnectionRequest = await ConnectionRequest.findOne({
       $or:[
         {fromUserId,toUserId},
         {fromUserId:toUserId,toUserId:fromUserId}
